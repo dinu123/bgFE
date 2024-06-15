@@ -1,23 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Autocomplete } from '@mui/material';
 import { _getAll } from "../../../../utils/apiUtils";
+import { useSearchParams } from 'next/navigation';
 
 const GeneralInformation = ({ formData, setFormData }) => {
   const [companies, setCompanies] = useState([]);
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   useEffect(() => {
-    const fetchCompanies = async () => {
+    const fetchData = async () => {
       try {
-        const data = await _getAll('/client');
+        
+        const companiesData = await _getAll('/client');
+        setCompanies(companiesData);
+
        
-        setCompanies(data);
+        if (id) {
+          const candidateData = await _getAll(`/candidate/${id}`);
+          console.log("this is candidate data",candidateData)
+          setFormData(candidateData);
+        } else {
+          if(localStorage.getItem("user_role") === '3') {
+            const data = await _getAll('/candidate');
+            setFormData(data[0]);
+          }
+        }
       } catch (error) {
-        console.error('Failed to fetch companies:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchCompanies();
-  }, []);
+    fetchData();
+  }, [id, setFormData]);
 
   const handleCompanyChange = (event, newValue) => {
     setFormData((prevData) => ({
@@ -45,10 +60,8 @@ const GeneralInformation = ({ formData, setFormData }) => {
     { name: "father_name", label: "Candidate Father’s Name", type: "text" },
     { name: "mobile_no", label: "Candidate Mobile No", type: "text" },
     { name: "email_id", label: "Candidate Email ID", type: "email" },
-    { name: "applicant_id", label: "Applicant ID / Employee Code", type: "text" },
     { name: "client_location", label: "Company Location", type: "text" },
     { name: "client_process", label: "Company Process Name", type: "text" },
-    { name: "candidate_code", label: "Candidate Code", type: "text" },
   ];
 
   return (
@@ -60,7 +73,7 @@ const GeneralInformation = ({ formData, setFormData }) => {
               value={companies.find(company => company.id === formData.company) || null}
               onChange={handleCompanyChange}
               options={companies}
-              getOptionLabel={(option) => option.name} 
+              getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -74,10 +87,9 @@ const GeneralInformation = ({ formData, setFormData }) => {
             />
           ) : field.type === "select" ? (
             <TextField
-              type="select"
-              name={field.name}
               select
-              value={formData[field.name] || field.options[0]} 
+              name={field.name}
+              value={formData[field.name] || field.options[0]}
               onChange={handleChange}
               label={field.label}
               variant="outlined"
@@ -99,7 +111,7 @@ const GeneralInformation = ({ formData, setFormData }) => {
               variant="outlined"
               fullWidth
               margin="normal"
-              InputLabelProps={field.type === "date" ? { shrink: true } : null}
+              InputLabelProps={field.type === "date" ? { shrink: true } : {}}
             />
           )}
         </div>

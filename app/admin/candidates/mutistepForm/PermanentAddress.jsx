@@ -14,7 +14,7 @@ const fields = [
   { name: "address_proof", label: "Address Proof", type: "number" },
   { name: "court_verified", label: "Court Verified", type: "boolean" },
   { name: "police_verified", label: "Police Verified", type: "boolean" },
-  { name: "candidate_id", label: "Candidate ID", type: "number" },
+  // { name: "candidate_id", label: "Candidate ID", type: "number" },
 ];
 
 const PermanentAddress = ({ formData, setFormData }) => {

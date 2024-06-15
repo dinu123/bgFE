@@ -22,7 +22,7 @@ const Education = ({ formData, setFormData }) => {
     { name: "grade", label: "Grade", type: "text" },
     { name: "marks", label: "Marks", type: "number" },
     { name: "certificate", label: "Certificate", type: "text" },
-    { name: "candidate_id", label: "Candidate ID", type: "text" }
+   
   ];
 
   return (

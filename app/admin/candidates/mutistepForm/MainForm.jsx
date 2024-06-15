@@ -9,72 +9,90 @@ import FathersDocument from "./FathersDocument";
 import CIBILInformation from "./CIBILInformation";
 import OtherReferenceInformation from "./OtherReferenceInformation";
 import { _create } from '../../../../utils/apiUtils';
+import { Notifications } from '@mui/icons-material';
+import { toast } from 'react-toastify';
+
 
 const steps = [
-  'General Information', 
-  'Permanent Address', 
-  'Education', 
-  'CIBIL Information', 
-  'Candidate Reference', 
-  'Work Experience', 
+  'General Information',
+  'Permanent Address',
+  'Education',
+  'CIBIL Information',
+  'Candidate Reference',
+  'Work Experience',
   'Father\'s Document'
 ];
 
+
 const stepEndpoints = [
-  '/candidate', 
-  '/candidate-address', 
-  '/candidate-eduction', 
-  '/candidate-cibil', 
-  '/candidate-reference', 
-  '/candidate-work-experience', 
+  '/candidate',
+  '/candidate-address',
+  '/candidate-education',
+  '/candidate-cibil',
+  '/candidate-reference',
+  '/candidate-work-experience',
   '/fathers-document'
 ];
 
+
 const MainForm = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [generalInfoData, setGeneralInfoData] = useState({});
-  const [permanentAddressData, setPermanentAddressData] = useState({});
-  const [educationData, setEducationData] = useState({});
-  const [workExperienceData, setWorkExperienceData] = useState({});
-  const [fathersDocumentData, setFathersDocumentData] = useState({});
-  const [cibilInformationData, setCibilInformationData] = useState({});
-  const [otherReferenceInformationData, setOtherReferenceInformationData] = useState({});
+  const [formData, setFormData] = useState({});
+  const [candidateId, setCandidateId] = useState('');
+
 
   const handleNext = async () => {
-    const formDataMapping = [
-      generalInfoData,
-      permanentAddressData,
-      educationData,
-      cibilInformationData,
-      otherReferenceInformationData,
-      workExperienceData,
-      fathersDocumentData
-    ];
-    console.log('Data for step', activeStep, ':', formDataMapping[activeStep]);
-
     try {
-      await _create(stepEndpoints[activeStep], formDataMapping[activeStep]);
+      let payload = { ...formData };
+      
+      if (activeStep === 0) {
+        const response = await _create(stepEndpoints[activeStep], payload);
+        console.log(response);
+        if(response.isError) {
+          toast.error(response.msg);
+          return 
+        }
+        setActiveStep((prevStep) => prevStep + 1);
+        const id = response.id;
+        console.log("responseId:", id);
+        setCandidateId(id);
+      } else {
+        payload = {
+          ...payload,
+          id: candidateId
+        };
+        await _create(stepEndpoints[activeStep], payload);
+      }
+ 
       console.log('Form data submitted successfully for step:', activeStep);
-      setActiveStep((prevStep) => prevStep + 1);
       console.log('Next Step:', activeStep + 1);
     } catch (error) {
       console.error('Failed to submit form data for step:', activeStep, error);
     }
   };
+ 
+ 
+ 
+
+
+
 
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
     console.log('Previous Step:', activeStep - 1);
   };
 
+
   const handleFinalSubmit = async () => {
     try {
-      await _create(stepEndpoints[activeStep], otherReferenceInformationData);
+      await _create(stepEndpoints[activeStep], formData);
       console.log('Form data submitted successfully for step:', activeStep);
+     
     } catch (error) {
       console.error('Failed to submit form data for final step:', activeStep, error);
     }
   };
+
 
   return (
     <div style={{ margin: '20px' }}>
@@ -86,27 +104,29 @@ const MainForm = () => {
         ))}
       </Stepper>
 
+
       {activeStep === 0 && (
-        <GeneralInformation formData={generalInfoData} setFormData={setGeneralInfoData} />
+        <GeneralInformation formData={formData} setFormData={setFormData} />
       )}
       {activeStep === 1 && (
-        <PermanentAddress formData={permanentAddressData} setFormData={setPermanentAddressData} />
+        <PermanentAddress formData={formData} setFormData={setFormData} />
       )}
       {activeStep === 2 && (
-        <Education formData={educationData} setFormData={setEducationData} />
+        <Education formData={formData} setFormData={setFormData} />
       )}
       {activeStep === 3 && (
-        <CIBILInformation formData={cibilInformationData} setFormData={setCibilInformationData} />
+        <CIBILInformation formData={formData} setFormData={setFormData} />
       )}
       {activeStep === 4 && (
-        <OtherReferenceInformation formData={otherReferenceInformationData} setFormData={setOtherReferenceInformationData} />
+        <OtherReferenceInformation formData={formData} setFormData={setFormData} />
       )}
       {activeStep === 5 && (
-        <WorkExperience formData={workExperienceData} setFormData={setWorkExperienceData} />
+        <WorkExperience formData={formData} setFormData={setFormData} />
       )}
       {activeStep === 6 && (
-        <FathersDocument formData={fathersDocumentData} setFormData={setFathersDocumentData} />
+        <FathersDocument formData={formData} setFormData={setFormData} />
       )}
+
 
       <div style={{ marginTop: '20px' }}>
         <Button
@@ -131,4 +151,8 @@ const MainForm = () => {
   );
 };
 
+
 export default MainForm;
+
+
+

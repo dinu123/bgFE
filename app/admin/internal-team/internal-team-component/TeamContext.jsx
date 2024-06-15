@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Grid } from '@mui/material';
 import { BsPlus, BsDownload } from 'react-icons/bs';
-import NewClientForm from '../../app/admin/companies/companies-components/NewClientForm';
-import CompaniesList from '../../app/admin/companies/companies-components/CompaniesList';
+import InternalTeamList from "./InternalTeamList"
+import NewTeamForm from "./NewTeamForm"
+
 import { _getAll } from '@/utils/apiUtils'; 
 
-function DashboardBody() {
+function TeamContext() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedClient, setSelectedClient] = useState(null);
-    const [clientListData, setClientListData] = useState([]);
+    const [selectedTeam, setSelectedTeam] = useState(null);
+    const [teamListData, setTeamListData] = useState([]);
 
     useEffect(() => {
-        updateClientList(); 
+        updateTeamList(); 
     }, []);
 
-    const handleOpenModal = (client) => {
-        setSelectedClient(client);
+    const handleOpenModal = (team) => {
+        setSelectedTeam(team);
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
-        setSelectedClient(null);
+        setSelectedTeam(null);
         setIsModalOpen(false);
     };
 
-    const updateClientList = async () => {
+    const updateTeamList = async () => {
         try {
             const data = await _getAll('/client');
-            setClientListData(data);
+            setTeamListData(data);
         } catch (error) {
-            console.error('Failed to fetch client data. Please try again later.', error);
+            console.error('Failed to fetch team data. Please try again later.', error);
         }
     };
 
@@ -55,16 +56,16 @@ function DashboardBody() {
                             startIcon={<BsPlus style={{ fontSize: '1.2em' }} />}
                             onClick={() => handleOpenModal(null)}
                         >
-                            New Company
+                            New Team
                         </Button>
                     </div>
                 </div>
             </div>
-            <CompaniesList 
-                clientListData={clientListData}
+            <InternalTeamList 
+                teamListData={teamListData}
                 onEdit={handleOpenModal} 
                 onAdd={handleOpenModal} 
-                updateClientList={updateClientList} 
+                updateTeamList={updateTeamList} 
             />
             <Modal
                 open={isModalOpen}
@@ -72,7 +73,7 @@ function DashboardBody() {
             >
                 <Grid >
                     <Grid >
-                        <NewClientForm client={selectedClient} onClose={handleCloseModal} updateClientList={updateClientList} />
+                        <NewTeamForm team={selectedTeam} onClose={handleCloseModal} updateTeamList={updateTeamList} />
                     </Grid>
                 </Grid>
             </Modal>
@@ -80,4 +81,4 @@ function DashboardBody() {
     );
 }
 
-export default DashboardBody;
+export default TeamContext;

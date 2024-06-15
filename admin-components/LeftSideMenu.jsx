@@ -9,7 +9,7 @@ const LeftSideMenu = () => {
         <MenuItem href="/admin/admin-dashboard" icon={FaChartBar} label="Dashboard" />
         <MenuItem href="/admin/companies" icon={FaUsers} label="Companies" />
         <MenuItem href="/admin/candidates" icon={FaUser} label="Candidates" />
-        <MenuItem href="/admin/internal-module" icon={FaUserCog} label="Internal Team" />
+        <MenuItem href="/admin/internal-team" icon={FaUserCog} label="Internal Team" />
       </ul>
     </div>
   );

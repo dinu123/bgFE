@@ -5,6 +5,8 @@ import { Edit, Delete, Preview } from '@mui/icons-material';
 import SearchComponent from '@/common-components/SearchComponent';
 import { _getAll, _delete } from '@/utils/apiUtils';  
 import columns from './columns';
+import Link from 'next/link';
+
 
 export default function CandidateList() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -18,6 +20,7 @@ export default function CandidateList() {
     const [errorMessage, setErrorMessage] = useState('');
     const [column, setColumn] = useState(columns);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+   
 
     useEffect(() => {
         fetchData();
@@ -51,9 +54,7 @@ export default function CandidateList() {
         setFilteredRows(filteredData);
     };
 
-    const handleEditInitiation = (row) => {
-        console.log('Edit:', row);
-    };
+   
 
     const handleDeleteInitiation = (row) => {
         setSelectedCandidate(row);
@@ -64,19 +65,20 @@ export default function CandidateList() {
         console.log('Preview:', row);
     };
 
-    const confirmDelete = async () => {
-        try {
-            await _delete('/candidate', selectedCandidate.id);
-            const updatedList = rows.filter(candidate => candidate.id !== selectedCandidate.id);
-            setRows(updatedList);
-            setFilteredRows(updatedList);
-            setDialogVisibility((prevState) => ({ ...prevState, isDeleteDialogOpen: false }));
-            setSnackbarOpen(true);
-        } catch (error) {
-            setErrorMessage('Failed to delete candidate. Please try again later.');
-            setDialogVisibility((prevState) => ({ ...prevState, isErrorDialogOpen: true }));
-        }
-    };
+   const confirmDelete = async () => {
+    try {
+        await _delete('/candidate', selectedCandidate.id);
+        const updatedData = await _getAll('/candidate'); 
+        setRows(updatedData); 
+        setFilteredRows(updatedData); 
+        setDialogVisibility((prevState) => ({ ...prevState, isDeleteDialogOpen: false }));
+        setSnackbarOpen(true);
+    } catch (error) {
+        setErrorMessage('Failed to delete candidate. Please try again later.');
+        setDialogVisibility((prevState) => ({ ...prevState, isErrorDialogOpen: true }));
+    }
+};
+
 
     const closeDialog = (dialogName) => {
         setDialogVisibility((prevState) => ({ ...prevState, [dialogName]: false }));
@@ -87,10 +89,18 @@ export default function CandidateList() {
         headerName: 'Actions',
         width: 200,
         renderCell: (params) => (
+            
             <>
-                <IconButton aria-label="edit" color="primary" onClick={() => handleEditInitiation(params.row)}>
-                    <Edit />
-                </IconButton>
+              <Link href={{
+    pathname: "/admin/candidates/add-candidates",
+    query: {
+        id: params.row.id 
+    }
+}}>
+    <IconButton aria-label="edit" color="primary">
+        <Edit />
+    </IconButton>
+</Link>
                 <IconButton aria-label="delete" color="secondary" onClick={() => handleDeleteInitiation(params.row)}>
                     <Delete />
                 </IconButton>

@@ -6,26 +6,20 @@ import { Snackbar, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const inputFields = [
-    { name: 'name', placeholder: 'Name of Client', label: 'Name', type: 'text', icon: <FaUser /> },
-    { name: 'representative_name', placeholder: 'Name of Representative', label: 'Representative', type: 'text', icon: <FaUser /> },
-    { name: 'designation', placeholder: 'Designation', label: 'Designation', type: 'text', icon: <FaUser /> },
-    { name: 'department', placeholder: 'Department', label: 'Department', type: 'text', icon: <FaUser /> },
+    { name: 'name', placeholder: 'Name of Team', label: 'Name', type: 'text', icon: <FaUser /> },
     { name: 'email_id', placeholder: 'Email ID', label: 'Email', type: 'email', icon: <FaEnvelope /> },
     { name: 'mobile_number', placeholder: 'Phone Number', label: 'Phone Number', type: 'text', icon: <FaMobile /> }
 ];
 
-const NewClientForm = ({ client, onClose, updateClientList }) => {
+const NewTeamForm = ({ team, onClose, updateTeamList }) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const initialValues = {
-        name: client ? client.name : '',
-        representative_name: client ? client.representative_name : '',
-        designation: client ? client.designation : '',
-        department: client ? client.department : '',
-        email_id: client ? client.email_id : '',
-        mobile_number: client ? client.mobile_number : ''
+        name: team ? team.name : '',
+        email_id: team ? team.email_id : '',
+        mobile_number: team ? team.mobile_number : ''
     };
 
     useEffect(() => {
@@ -42,18 +36,18 @@ const NewClientForm = ({ client, onClose, updateClientList }) => {
 
     const onSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
-            if (client) {
-                await _update('client', client.id, values);
-                setSuccessMessage('Company updated successfully!');
+            if (team) {
+                await _update('client', team.id, values);
+                setSuccessMessage('Team updated successfully!');
             } else {
                 await _create('/client', values);
-                setSuccessMessage('Company registered successfully!');
+                setSuccessMessage('Team registered successfully!');
             }
             onClose();
-            updateClientList(); // Refresh client list after submission
+            updateTeamList(); 
         } catch (error) {
             console.error('Error:', error);
-            setErrorMessage('Failed to save client data. Please try again later.');
+            setErrorMessage('Failed to save team data. Please try again later.');
         } finally {
             setSubmitting(false);
         }
@@ -76,7 +70,7 @@ const NewClientForm = ({ client, onClose, updateClientList }) => {
                 <div className="col-md-6">
                     <div className="card shadow p-4" style={{ borderRadius: "20px" }}>
                         <h1 className="card-title text-center mb-4" style={{ fontWeight: 'bold', color: 'blue', fontSize: '2rem' }}>
-                            {client ? 'Update Company' : 'Register New Company'}
+                            {team ? 'Update Team' : 'Register New Team'}
                         </h1>
                         <Formik
                             enableReinitialize
@@ -132,4 +126,4 @@ const NewClientForm = ({ client, onClose, updateClientList }) => {
     );
 };
 
-export default NewClientForm;
+export default NewTeamForm;

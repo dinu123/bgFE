@@ -6,27 +6,27 @@ import SearchComponent from '@/common-components/SearchComponent';
 import { _delete } from '@/utils/apiUtils';
 import staticColumns from './columns';
 
-export default function CompaniesList({ clientListData, onEdit,  updateClientList }) {
-    const [filteredClientListData, setFilteredClientListData] = useState([]);
-    const [selectedClient, setSelectedClient] = useState(null);
+export default function InternalTeamList({ teamListData, onEdit, updateTeamList }) {
+    const [filteredTeamListData, setFilteredTeamListData] = useState([]);
+    const [selectedTeam, setSelectedTeam] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [dialogVisibility, setDialogVisibility] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        setFilteredClientListData(clientListData);
-    }, [clientListData]);
+        setFilteredTeamListData(teamListData);
+    }, [teamListData]);
 
     const handleErrorMessage = (message) => {
         setErrorMessage(message);
         setDialogVisibility({ isErrorDialogOpen: true });
     };
 
-    const handleActionInitiation = (action, client) => {
-        setSelectedClient(client);
+    const handleActionInitiation = (action, team) => {
+        setSelectedTeam(team);
         switch (action) {
             case 'edit':
-                onEdit(client);
+                onEdit(team);
                 break;
             case 'delete':
                 setDialogVisibility({ isDeleteDialogOpen: true });
@@ -45,21 +45,21 @@ export default function CompaniesList({ clientListData, onEdit,  updateClientLis
     };
 
     const filterData = (query) => {
-        const filteredData = clientListData.filter(client =>
-            Object.values(client).some(value =>
+        const filteredData = teamListData.filter(team =>
+            Object.values(team).some(value =>
                 value !== null && value !== undefined && value.toString().toLowerCase().includes(query.toLowerCase())
             )
         );
-        setFilteredClientListData(filteredData);
+        setFilteredTeamListData(filteredData);
     };
 
     const confirmDelete = async () => {
         try {
-            await _delete('client', selectedClient.id);
-            await updateClientList(); 
+            await _delete('client', selectedTeam.id);
+            await updateTeamList(); 
             setDialogVisibility({ isDeleteDialogOpen: false });
         } catch (error) {
-            handleErrorMessage('Failed to delete client. Please try again later.');
+            handleErrorMessage('Failed to delete team. Please try again later.');
         }
     };
 
@@ -71,7 +71,7 @@ export default function CompaniesList({ clientListData, onEdit,  updateClientLis
         <div style={{ height: 440, width: '100%', padding: '16px' }}>
             <SearchComponent searchQuery={searchQuery} onSearch={handleSearch} />
             <DataGrid
-                rows={filteredClientListData}
+                rows={filteredTeamListData}
                 columns={[...staticColumns, {
                     field: 'actions',
                     headerName: 'Actions',
@@ -94,21 +94,21 @@ export default function CompaniesList({ clientListData, onEdit,  updateClientLis
                 rowsPerPageOptions={[5, 10, 20]}
             />
 
-            {/* Delete Client */}
+            {/* Delete Team */}
             <Dialog open={dialogVisibility.isDeleteDialogOpen} onClose={handleCloseDialog}>
-                <DialogTitle>Delete Company</DialogTitle>
-                <DialogContent>Are you sure you want to delete this company?</DialogContent>
+                <DialogTitle>Delete Team</DialogTitle>
+                <DialogContent>Are you sure you want to delete this team?</DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} color="primary">Cancel</Button>
                     <Button onClick={confirmDelete} color="primary" autoFocus>Delete</Button>
                 </DialogActions>
             </Dialog>
 
-            {/* Preview Client */}
+            {/* Preview Team */}
             <Dialog open={dialogVisibility.isPreviewDialogOpen} onClose={handleCloseDialog}>
-                <DialogTitle>Preview Company</DialogTitle>
+                <DialogTitle>Preview Team</DialogTitle>
                 <DialogContent>
-                    <pre>{JSON.stringify(selectedClient, null, 2)}</pre>
+                    <pre>{JSON.stringify(selectedTeam, null, 2)}</pre>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} color="primary">Close</Button>

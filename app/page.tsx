@@ -6,7 +6,7 @@ const HomePage = () => {
     const router = useRouter();
 
     useEffect(() => {
-        router.push('/auth/login');
+        router.push('/auth/signup');
     }, [router]);
 
     return <div>Loading...</div>;

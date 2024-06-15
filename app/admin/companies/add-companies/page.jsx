@@ -1,5 +1,5 @@
 import React from 'react'
-import NewClientForm from '../companies-components/NewClientForm'
+import NewClientForm from "../../../../admin-components/companies/NewClientForm"
 
 function page() {
   return (
